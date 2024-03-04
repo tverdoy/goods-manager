@@ -43,7 +43,7 @@ func (l *LoggerWorker) Run() error {
 
 					if currentPtr == BufferSize-1 {
 						// buffer is full
-						break
+						break fillBuf
 					}
 				default:
 					break fillBuf
