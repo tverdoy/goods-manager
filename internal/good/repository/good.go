@@ -16,31 +16,12 @@ type goodRepository struct {
 
 // Create creates a new Good in the database.
 //
-// Parameters:
-// - ctx: The context.Context for the operation.
-// - good: A pointer to the Good entity to be created.
-//
-// Returns:
-// - error: An error if the operation fails, nil otherwise.
-//
 // Description:
 // The Create method inserts a new Good into the goods table in the database.
 // It generates a new priority for the Good by incrementing the maximum priority of existing goods.
 // The Good's project ID, name, description, and priority are provided as input parameters.
 // The method returns the ID, priority, removed status, and creation timestamp of the newly
 // created Good.
-//
-// Example usage:
-//
-//	good := &entity.Good{
-//	    ProjectId:   1,
-//	    Name:        "New Good",
-//	    Description: "A new Good",
-//	}
-//	err := repository.Create(ctx, good)
-//	if err != nil {
-//	    log.Println("Failed to create Good:", err)
-//	}
 //
 // Note:
 // - The priority is calculated by incrementing the maximum priority of existing goods. If there are no existing goods, the priority will be set to 1.
