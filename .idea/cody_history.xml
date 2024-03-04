@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChatHistory">
+    <chats>
+      <list>
+        <chat>
+          <accountId value="VXNlcjoyNTYwNDE=" />
+          <internalId value="d0cef02d-35fe-4085-9c68-e9b19d53d1a4" />
+        </chat>
+        <chat>
+          <accountId value="VXNlcjoyNTYwNDE=" />
+          <internalId value="0e4d59a5-4b0f-4c87-883e-1367fe21c0fd" />
+        </chat>
+        <chat>
+          <accountId value="VXNlcjoyNTYwNDE=" />
+          <internalId value="2e3acdf5-1ff4-4099-a9a4-d47bc0288647" />
+          <messages>
+            <list>
+              <message>
+                <speaker value="HUMAN" />
+                <text value="sql get max or 0" />
+              </message>
+              <message>
+                <speaker value="ASSISTANT" />
+                <text value=" Here is SQL to get the maximum value or 0 if no rows exist:&#10;&#10;```sql&#10;SELECT COALESCE(MAX(column), 0)&#10;FROM table&#10;```&#10;&#10;The COALESCE function returns the first non-null value from the arguments. So if MAX(column) returns NULL because there are no rows, it will return 0 instead.&#10;&#10;To get the maximum value from multiple columns, you can use:&#10;&#10;```sql&#10;SELECT COALESCE(MAX(column1), MAX(column2), 0) &#10;FROM table&#10;```&#10;&#10;This will return the maximum of column1 and column2, or 0 if both are NULL.&#10;&#10;The MAX() aggregate function ignores NULL values, so if there are no non-null values in the column it returns NULL. COALESCE handles this by substituting 0 instead." />
+              </message>
+              <message>
+                <speaker value="HUMAN" />
+                <text value="sql with example" />
+              </message>
+              <message>
+                <speaker value="ASSISTANT" />
+                <text value=" Here is an example to get the maximum salary or 0 if there are no rows in the employees table:&#10;&#10;```sql&#10;SELECT COALESCE(MAX(salary), 0) AS max_salary&#10;FROM employees;&#10;```&#10;&#10;This will return the maximum salary value from the table, or 0 if the table is empty.&#10;&#10;For example, if the employees table contains:&#10;&#10;```&#10;id | name | salary&#10;------------------- &#10;1 | John | 50000&#10;2 | Jane | 60000&#10;```&#10;&#10;It would return:&#10;&#10;```&#10;max_salary&#10;-----------&#10;60000&#10;```&#10;&#10;If the employees table was empty, it would return:&#10;&#10;```&#10;max_salary&#10;-----------&#10;0&#10;```&#10;&#10;The COALESCE function along with MAX allows us to handle the case where MAX returns NULL by substituting a default value of 0 instead." />
+              </message>
+              <message>
+                <speaker value="HUMAN" />
+                <text value="format this code func (g *goodRepository) Create(ctx context.Context, good *entity.Good) error {&#10;&#9;query := `&#10;WITH&#10;    max_priority AS (&#10;        SELECT COALESCE(MAX(goods.priority), 0) AS priority FROM goods&#10;    )&#10;`&#10;&#9;&#10;&#9;query += `INSERT INTO good (project_id, name, description, priority) VALUES ($1, $2, $3, max_priority.priority)`&#10;&#9;query += `RETURNING id, priority, removed, created_at`&#10;&#9;row := g.db.QueryRowContext(ctx, query, good.ProjectId, good.Name, good.Description)&#10;&#9;&#10;&#9;return row.Scan(&amp;amp;good.Id, &amp;amp;good.Priority, &amp;amp;good.Removed, &amp;amp;good.CreatedAt)&#10;}" />
+              </message>
+              <message>
+                <speaker value="ASSISTANT" />
+                <text value=" Here is the code formatted:&#10;&#10;```go&#10;func (g *goodRepository) Create(ctx context.Context, good *entity.Good) error {&#10;    query := `&#10;        WITH&#10;            max_priority AS (&#10;                SELECT COALESCE(MAX(goods.priority), 0) AS priority &#10;                FROM goods&#10;            )&#10;    `&#10;&#10;    query += `INSERT INTO good (project_id, name, description, priority) &#10;               VALUES ($1, $2, $3, max_priority.priority)&#10;               RETURNING id, priority, removed, created_at`&#10;    &#10;    row := g.db.QueryRowContext(ctx, query, &#10;        good.ProjectId, good.Name, good.Description)&#10;&#10;    return row.Scan(&amp;good.Id, &amp;good.Priority, &amp;good.Removed, &amp;good.CreatedAt)&#10;}&#10;```&#10;&#10;The key changes:&#10;&#10;- Indent the WITH query 4 spaces&#10;- Break the INSERT statement into multiple lines &#10;- Indent the `row.Scan` call 4 spaces&#10;- Add newlines between major sections&#10;&#10;This formats the code nicely and makes it more readable." />
+              </message>
+              <message>
+                <speaker value="HUMAN" />
+                <text value="write doc for Reprioritize" />
+              </message>
+              <message>
+                <speaker value="ASSISTANT" />
+                <text value=" Here is one way to document the Reprioritize function:&#10;&#10;```go&#10;// Reprioritize reorders the priority of all goods in a project.&#10;// It assigns priority values starting from 1 based on the provided order of goods.&#10;//&#10;// The goods parameter should contain the desired order of all goods in the project.&#10;// Goods not included in the slice will have their priority set to 0.&#10;//&#10;// Example usage:&#10;//&#10;//   goods := []*Good{good1, good2, good3}&#10;//   err := Reprioritize(ctx, projectID, goods) &#10;//&#10;// This will set good1 to priority 1, good2 to 2, good3 to 3.&#10;// Any other goods in the project not in the slice will have priority 0.&#10;//&#10;// Returns any error encountered while updating priorities.&#10;func Reprioritize(ctx context.Context, projectID int64, goods []*Good) error {&#10;&#9;// implementation&#10;}&#10;```&#10;&#10;The key points:&#10;&#10;- Describe what the function does &#10;- Explain the expected input parameters&#10;- Give an example of usage&#10;- List any return values like errors&#10;- Use comments to provide extra details&#10;&#10;This documents the intended usage and behavior of the function for other developers." />
+              </message>
+              <message>
+                <speaker value="HUMAN" />
+                <text value="write doc for this func ```func (g *goodRepository) Reprioritize(ctx context.Context, id, newPriority int) (map[int]int, error) {&#10;&#9;tx, err := g.db.Begin()&#10;&#9;if err != nil {&#10;&#9;&#9;return nil, err&#10;&#9;}&#10;&#10;&#9;queryUpdateAfter := `&#10;&#9;&#9;UPDATE goods SET priority = priority + 1 &#10;&#9;&#9;             WHERE priority &amp;gt;= $1 and id != $2&#10;&#9;&#9;             RETURNING id, priority;&#10;&#9;`&#10;&#9;rows, err := tx.QueryContext(ctx, queryUpdateAfter, newPriority, id)&#10;&#9;if err != nil {&#10;&#9;&#9;if err := tx.Rollback(); err != nil {&#10;&#9;&#9;&#9;return nil, err&#10;&#9;&#9;}&#10;&#10;&#9;&#9;return nil, err&#10;&#9;}&#10;&#10;&#9;priorities := make(map[int]int)&#10;&#9;for rows.Next() {&#10;&#9;&#9;var id int&#10;&#9;&#9;var priority int&#10;&#9;&#9;err := rows.Scan(&amp;amp;id, &amp;amp;priority)&#10;&#9;&#9;if err != nil {&#10;&#9;&#9;&#9;return nil, err&#10;&#9;&#9;}&#10;&#10;&#9;&#9;priorities[id] = priority&#10;&#9;}&#10;&#10;&#9;queryUpdateGood := `UPDATE goods SET priority = $1 WHERE id = $2;`&#10;&#9;if _, err := tx.ExecContext(ctx, queryUpdateGood, newPriority, id); err != nil {&#10;&#9;&#9;if err := tx.Rollback(); err != nil {&#10;&#9;&#9;&#9;return nil, err&#10;&#9;&#9;}&#10;&#9;&#9;return nil, err&#10;&#9;}&#10;&#10;&#9;return priorities, tx.Commit()&#10;}```" />
+              </message>
+              <message>
+                <speaker value="ASSISTANT" />
+                <text value=" Here is one way to document the Reprioritize function:&#10;&#10;```go&#10;// Reprioritize changes the priority of a good and updates all other priorities.&#10;// &#10;// It takes the id of the good to reprioritize and the new priority value.&#10;// It starts a database transaction to safely update all priorities.&#10;//&#10;// First it updates all goods with priority &gt;= newPriority (except the reprioritized good) &#10;// by incrementing their priority by 1. This makes room for the new priority value.&#10;// &#10;// It returns a map of good ids to their new priority after the update.&#10;//&#10;// Finally it updates the reprioritized good to the new priority value.&#10;// The transaction is committed if all queries succeed.&#10;// &#10;// Returns a map of updated priorities and any error encountered.&#10;// &#10;// Example usage:&#10;//&#10;//   newPriorities, err := Reprioritize(ctx, 5, 2)&#10;//&#10;// This reprioritizes good 5 to priority 2, incrementing all goods &gt;= 2 by 1.&#10;//&#10;func (g *goodRepository) Reprioritize(ctx context.Context, id, newPriority int) (map[int]int, error) {&#10;&#9;// implementation&#10;}&#10;```&#10;&#10;Key points:&#10;&#10;- Explain overall logic and steps&#10;- Show example usage&#10;- Document parameters and return values&#10;- Use comments for extra details&#10;&#10;This provides a clear overview of what the function does and how to use it." />
+              </message>
+            </list>
+          </messages>
+          <updatedAt value="2024-03-04T14:11:03.95891" />
+        </chat>
+      </list>
+    </chats>
+  </component>
+</project>

@@ -1,0 +1,252 @@
+basePath: /
+definitions:
+  controller.ListResponse:
+    properties:
+      goods:
+        items:
+          $ref: '#/definitions/entity.Good'
+        type: array
+      meta:
+        $ref: '#/definitions/controller.Meta'
+    type: object
+  controller.Meta:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+      removed:
+        type: integer
+      total:
+        type: integer
+    type: object
+  controller.PrioritizeRequest:
+    properties:
+      newPriority:
+        type: integer
+    type: object
+  controller.PrioritizeResponse:
+    properties:
+      priorities:
+        items:
+          $ref: '#/definitions/controller.UpratedPriority'
+        type: array
+    type: object
+  controller.UpratedPriority:
+    properties:
+      id:
+        type: integer
+      priority:
+        type: integer
+    type: object
+  entity.Good:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+      project_id:
+        type: integer
+      removed:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Goods manager APIr
+  title: Goods manager
+  version: "1.0"
+paths:
+  /good/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: query
+        name: projectId
+        required: true
+        type: integer
+      - description: Good object that needs to be added to the store
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Good'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Good object that was added
+          schema:
+            $ref: '#/definitions/entity.Good'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      summary: Add a new good to the store
+      tags:
+      - good
+  /good/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Offset of select
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: Limit of rows
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Goods objects and metadata
+          schema:
+            $ref: '#/definitions/controller.ListResponse'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      summary: Get list goods
+      tags:
+      - good
+  /good/remove:
+    delete:
+      parameters:
+      - description: Project ID
+        in: query
+        name: projectId
+        required: true
+        type: integer
+      - description: ID of good
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Good that was deleted
+          schema:
+            $ref: '#/definitions/entity.Good'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Good not found
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      summary: Delete good
+      tags:
+      - good
+  /good/reprioritiize:
+    patch:
+      parameters:
+      - description: Project ID
+        in: query
+        name: projectId
+        required: true
+        type: integer
+      - description: ID of good
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: New priority
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/controller.PrioritizeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List goods where was update priority
+          schema:
+            $ref: '#/definitions/controller.PrioritizeResponse'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Good not found
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      summary: Reprioritize good priority
+      tags:
+      - good
+  /good/update:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: query
+        name: projectId
+        required: true
+        type: integer
+      - description: ID of good
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Good object that needs update
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Good'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Good that was updated
+          schema:
+            $ref: '#/definitions/entity.Good'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: Good not found
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      summary: Update good
+      tags:
+      - good
+swagger: "2.0"
