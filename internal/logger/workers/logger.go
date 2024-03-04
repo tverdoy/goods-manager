@@ -33,19 +33,21 @@ func (l *LoggerWorker) Run() error {
 		for {
 			// select good from chanel unless buffer size will
 			// be `BufferSize` or end of chanel
+		fillBuf:
+			for {
+				select {
+				case good := <-ch:
+					// add good to buffer
+					buf[currentPtr] = good
+					currentPtr++
 
-			select {
-			case good := <-ch:
-				// add good to buffer
-				buf[currentPtr] = good
-				currentPtr++
-
-				if currentPtr == BufferSize-1 {
-					// buffer is full
-					break
+					if currentPtr == BufferSize-1 {
+						// buffer is full
+						break
+					}
+				default:
+					break fillBuf
 				}
-			default:
-				break
 			}
 
 			// if buffer has goods, then store them
