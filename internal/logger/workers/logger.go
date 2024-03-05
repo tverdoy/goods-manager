@@ -8,10 +8,9 @@ import (
 	"goods-manager/internal/domain/entity"
 	"goods-manager/internal/logger/usecase"
 	"log"
+	"sync"
 	"time"
 )
-
-const BufferSize = 100 // Buffer size for send many logs to store
 
 // LoggerWorker struct for receive and save logs
 type LoggerWorker struct {
@@ -21,47 +20,30 @@ type LoggerWorker struct {
 
 // Run start listing `usecase.Subject` and save logs to store
 func (l *LoggerWorker) Run() error {
-	ch := make(chan *entity.Good, 10)
+	mx := sync.Mutex{}
+	buf := make([]*entity.Good, 0)
 
 	go func() {
-		// goroutine for store events
-		buf := [BufferSize]*entity.Good{}
-		currentPtr := 0
-
-		ctx := context.Background()
-
 		for {
-			// select good from chanel unless buffer size will
-			// be `BufferSize` or end of chanel
-		fillBuf:
-			for {
-				select {
-				case good := <-ch:
-					// add good to buffer
-					buf[currentPtr] = good
-					currentPtr++
-
-					if currentPtr == BufferSize-1 {
-						// buffer is full
-						break fillBuf
-					}
-				default:
-					break fillBuf
-				}
+			mx.Lock()
+			if len(buf) == 0 {
+				mx.Unlock()
+				continue
 			}
 
-			// if buffer has goods, then store them
-			if currentPtr > 0 {
-				ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-				if err := l.loggerUsecase.SaveList(ctx, buf[:currentPtr]); err != nil {
-					log.Println("failed to save list of goods log", err)
-				}
+			events := make([]*entity.Good, len(buf))
+			copy(events, buf)
+			buf = buf[:0]
+			mx.Unlock()
 
-				// clean buffer
-				currentPtr = 0
-				cancel()
+			ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+			defer cancel()
+
+			if err := l.loggerUsecase.SaveList(ctx, events); err != nil {
+				log.Println("failed to save list of goods log", err)
 			}
 
+			time.Sleep(1 * time.Second)
 		}
 	}()
 
@@ -72,7 +54,9 @@ func (l *LoggerWorker) Run() error {
 			log.Println("failed unmarshal data from nats:", err)
 		}
 
-		ch <- &good
+		mx.Lock()
+		buf = append(buf, &good)
+		mx.Unlock()
 	})
 
 	if s.IsValid() {
