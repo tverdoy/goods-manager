@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func initRepository() (*goodRepository, sqlmock.Sqlmock, error) {
+func initTestRepository() (*goodRepository, sqlmock.Sqlmock, error) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		return nil, nil, err
@@ -21,7 +21,7 @@ func initRepository() (*goodRepository, sqlmock.Sqlmock, error) {
 }
 
 func Test_goodRepository_Create(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func Test_goodRepository_Create(t *testing.T) {
 }
 
 func Test_goodRepository_Get(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func Test_goodRepository_Get(t *testing.T) {
 }
 
 func Test_goodRepository_Update(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,7 +113,7 @@ func Test_goodRepository_Update(t *testing.T) {
 }
 
 func Test_goodRepository_Delete(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,7 +135,7 @@ func Test_goodRepository_Delete(t *testing.T) {
 }
 
 func Test_goodRepository_List(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,7 +173,7 @@ func Test_goodRepository_List(t *testing.T) {
 }
 
 func Test_goodRepository_Reprioritize(t *testing.T) {
-	repo, mock, err := initRepository()
+	repo, mock, err := initTestRepository()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -9,6 +9,8 @@ import (
 var ErrorGoodNotFound = errors.New("good not found")
 
 // GoodUsecase represents the use case interface for managing goods.
+//
+//go:generate mockery --name GoodUsecase
 type GoodUsecase interface {
 	// Create creates a new Good entity.
 	Create(ctx context.Context, good *entity.Good) error
@@ -30,6 +32,8 @@ type GoodUsecase interface {
 	// It returns a map containing IDs of affected Goods and their new priorities, and an error if the operation fails.
 	Reprioritize(ctx context.Context, id, newPriority int) (map[int]int, error)
 }
+
+//go:generate mockery --name GoodRepository
 type GoodRepository interface {
 	Create(ctx context.Context, good *entity.Good) error
 	Get(ctx context.Context, id int) (*entity.Good, error)
