@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"goods-manager/internal/domain"
 	"goods-manager/internal/domain/entity"
 	"goods-manager/internal/transactor"
@@ -19,6 +20,10 @@ type goodUsecase struct {
 
 // Create new good and send log
 func (g *goodUsecase) Create(ctx context.Context, good *entity.Good) error {
+	if good.Name == "" || good.ProjectId == 0 {
+		return errors.New("invalid data")
+	}
+
 	return g.transactor.WithTransaction(ctx, func(ctx context.Context) error {
 		err := g.goodRepo.Create(ctx, good)
 
@@ -38,6 +43,10 @@ func (g *goodUsecase) Get(ctx context.Context, id int) (*entity.Good, error) {
 
 // Update good and send log
 func (g *goodUsecase) Update(ctx context.Context, good *entity.Good) error {
+	if good.Id == 0 || good.Name == "" || good.ProjectId == 0 {
+		return errors.New("invalid data")
+	}
+
 	return g.transactor.WithTransaction(ctx, func(ctx context.Context) error {
 		err := g.goodRepo.Update(ctx, good)
 
@@ -53,6 +62,10 @@ func (g *goodUsecase) Update(ctx context.Context, good *entity.Good) error {
 
 // Delete good and send log
 func (g *goodUsecase) Delete(ctx context.Context, good *entity.Good) error {
+	if good.Id == 0 || good.Name == "" || good.ProjectId == 0 {
+		return errors.New("invalid data")
+	}
+
 	return g.transactor.WithTransaction(ctx, func(ctx context.Context) error {
 		good.Removed = true
 		err := g.goodRepo.Delete(ctx, good.Id)
@@ -72,6 +85,10 @@ func (g *goodUsecase) List(ctx context.Context, limit, offset int) ([]*entity.Go
 }
 
 func (g *goodUsecase) Reprioritize(ctx context.Context, id, newPriority int) (map[int]int, error) {
+	if id < 1 || newPriority < 1 {
+		return nil, errors.New("invalid data")
+	}
+
 	var priorities map[int]int
 	err := g.transactor.WithTransaction(ctx, func(ctx context.Context) error {
 		newPriorities, err := g.goodRepo.Reprioritize(ctx, id, newPriority)
